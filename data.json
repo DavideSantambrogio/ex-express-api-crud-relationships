@@ -1,0 +1,62 @@
+[
+    {
+        "title": "Guida alla Programmazione Python",
+        "image": "https://example.com/python.jpg",
+        "content": "Questo articolo esplora le basi della programmazione in Python...",
+        "published": true
+    },
+    {
+        "title": "I Benefici della Meditazione Quotidiana",
+        "image": "https://example.com/meditation.jpg",
+        "content": "La meditazione ha numerosi benefici per la mente e il corpo...",
+        "published": false
+    },
+    {
+        "title": "10 Ricette Veloci per una Cena Sana",
+        "image": "https://example.com/recipes.jpg",
+        "content": "Scopri queste 10 ricette facili e veloci per una cena sana...",
+        "published": true
+    },
+    {
+        "title": "La Storia del Cinema Italiano",
+        "image": "https://example.com/italian_cinema.jpg",
+        "content": "Un viaggio attraverso la storia del cinema italiano dal neorealismo ad oggi...",
+        "published": false
+    },
+    {
+        "title": "Tecniche di Fotografia per Principianti",
+        "image": "https://example.com/photography.jpg",
+        "content": "Impara le tecniche di base per migliorare le tue fotografie...",
+        "published": true
+    },
+    {
+        "title": "Viaggio nelle Capitali Europee",
+        "image": "https://example.com/european_capitals.jpg",
+        "content": "Un tour delle capitali europee più affascinanti e storiche...",
+        "published": false
+    },
+    {
+        "title": "Come Risparmiare Denaro con un Budget Personale",
+        "image": "https://example.com/budget.jpg",
+        "content": "Suggerimenti e strategie per creare e mantenere un budget personale...",
+        "published": true
+    },
+    {
+        "title": "L'Importanza dell'Esercizio Fisico Regolare",
+        "image": "https://example.com/exercise.jpg",
+        "content": "Scopri perché l'esercizio fisico regolare è fondamentale per la salute...",
+        "published": false
+    },
+    {
+        "title": "Introduzione alla Filosofia Orientale",
+        "image": "https://example.com/eastern_philosophy.jpg",
+        "content": "Un'introduzione ai concetti chiave della filosofia orientale...",
+        "published": true
+    },
+    {
+        "title": "Tecnologie Emergenti nel 2024",
+        "image": "https://example.com/emerging_tech.jpg",
+        "content": "Una panoramica delle tecnologie emergenti che stanno cambiando il mondo...",
+        "published": false
+    }
+]
