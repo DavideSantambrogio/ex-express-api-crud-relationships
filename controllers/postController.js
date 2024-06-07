@@ -19,9 +19,14 @@ const generateUniqueSlug = async (title) => {
 
 // Creare un nuovo post
 exports.createPost = async (req, res) => {
-    const { title, image, content, published } = req.body;
+    const { title, image, content, published, categoryId, tagIds } = req.body;
     try {
         const slug = await generateUniqueSlug(title); // Generazione dello slug unico
+
+        // Verifica che tagIds sia un array, altrimenti usa un array vuoto
+        const tagIdsArray = Array.isArray(tagIds) ? tagIds : [];
+
+        // Creazione del post
         const post = await prisma.post.create({
             data: {
                 title,
@@ -29,11 +34,22 @@ exports.createPost = async (req, res) => {
                 image,
                 content,
                 published,
+                // Associare la categoria al post se presente
+                ...(categoryId && { category: { connect: { id: categoryId } } }),
+                // Associare i tag al post se presenti
+                tags: {
+                    connect: tagIdsArray.map(id => ({ id }))
+                }
             },
+            include: {
+                category: true,
+                tags: true
+            }
         });
         res.status(201).json(post);
     } catch (error) {
-        res.status(500).json({ error: 'Qualcosa è andato storto' });
+        console.error('Errore durante la creazione del post:', error);
+        res.status(500).json({ error: 'Qualcosa è andato storto', dettagli: error.message });
     }
 };
 
@@ -43,6 +59,10 @@ exports.getPostBySlug = async (req, res) => {
     try {
         const post = await prisma.post.findUnique({
             where: { slug },
+            include: {
+                category: true,
+                tags: true
+            }
         });
         if (post) {
             res.status(200).json(post);
@@ -65,7 +85,6 @@ exports.getPosts = async (req, res) => {
             where.published = published === 'true';
         }
 
-
         // Calcola l'offset per la paginazione
         const offset = (page - 1) * pageSize;
 
@@ -80,9 +99,13 @@ exports.getPosts = async (req, res) => {
             throw new Error('La pagina richiesta non esiste.');
         }
 
-        // Ottieni i post con paginazione
+        // Ottieni i post con paginazione e includi categoria e tag
         const posts = await prisma.post.findMany({
             where,
+            include: {
+                category: true,
+                tags: true
+            },
             take: parseInt(pageSize),
             skip: parseInt(offset)
         });
