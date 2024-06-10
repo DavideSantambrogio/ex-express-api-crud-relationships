@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const tagController = require('../controllers/tagController');
-const { validateData } = require('../middlewares/validationMiddleware');
+const validateData = require('../middlewares/validationMiddleware');
 const { body } = require('express-validator');
 const { tagValidation } = require('../validations/tagValidation');
 

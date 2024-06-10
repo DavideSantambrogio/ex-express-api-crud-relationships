@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
-const { validateData } = require('../middlewares/validationMiddleware');
+const validateData = require('../middlewares/validationMiddleware');
 const { body } = require('express-validator');
 const { categoryValidation } = require('../validations/categoryValidation');
 
