@@ -8,9 +8,7 @@ const { tagValidation } = require('../validations/tagValidation');
 // Endpoint per creare un nuovo tag
 router.post('/', [
     body('name').notEmpty().withMessage(tagValidation.name.notEmpty.errorMessage).isString().withMessage(tagValidation.name.isString.errorMessage).isLength({ min: 3 }).withMessage(tagValidation.name.isLength.errorMessage),
-    validateData // Middleware per eseguire la validazione
+    validateData
 ], tagController.createTag);
-
-
 
 module.exports = router;

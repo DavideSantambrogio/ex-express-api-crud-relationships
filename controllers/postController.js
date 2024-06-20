@@ -21,12 +21,10 @@ const generateUniqueSlug = async (title) => {
 exports.createPost = async (req, res) => {
     const { title, image, content, published, categoryId, tagIds } = req.body;
     try {
-        const slug = await generateUniqueSlug(title); // Generazione dello slug unico
+        const slug = await generateUniqueSlug(title);
 
-        // Verifica che tagIds sia un array, altrimenti usa un array vuoto
         const tagIdsArray = Array.isArray(tagIds) ? tagIds : [];
 
-        // Creazione del post
         const post = await prisma.post.create({
             data: {
                 title,
@@ -34,9 +32,7 @@ exports.createPost = async (req, res) => {
                 image,
                 content,
                 published,
-                // Associare la categoria al post se presente
                 ...(categoryId && { category: { connect: { id: categoryId } } }),
-                // Associare i tag al post se presenti
                 tags: {
                     connect: tagIdsArray.map(id => ({ id }))
                 }
@@ -80,26 +76,18 @@ exports.getPosts = async (req, res) => {
         const where = {};
         const { published, page = 1, pageSize = 50, searchTerm } = req.query;
 
-        // Aggiungi il filtro per lo stato di pubblicazione se specificato
         if (published !== undefined) {
             where.published = published === 'true';
         }
 
-        // Calcola l'offset per la paginazione
         const offset = (page - 1) * pageSize;
-
-        // Conta il numero totale di post
         const totalItems = await prisma.post.count({ where });
-
-        // Calcola il numero totale di pagine
         const totalPages = Math.ceil(totalItems / pageSize);
 
-        // Verifica se la pagina richiesta esiste
         if (page > totalPages) {
             throw new Error('La pagina richiesta non esiste.');
         }
 
-        // Ottieni i post con paginazione e includi categoria e tag
         const posts = await prisma.post.findMany({
             where,
             include: {
@@ -121,13 +109,12 @@ exports.getPosts = async (req, res) => {
     }
 };
 
-
 // Aggiornare un post tramite il suo slug
 exports.updatePostBySlug = async (req, res) => {
     const { slug } = req.params;
     const { title, image, content, published } = req.body;
     try {
-        const newSlug = await generateUniqueSlug(title); // Generazione del nuovo slug unico
+        const newSlug = await generateUniqueSlug(title);
         const post = await prisma.post.update({
             where: { slug },
             data: {

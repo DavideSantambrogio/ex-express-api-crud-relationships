@@ -1,24 +1,67 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// Funzione per creare un nuovo tag nel database
-const createTag = async (name) => {
+// Creare un nuovo tag
+exports.createTag = async (req, res) => {
+    const { name } = req.body;
     try {
-        // Utilizzo del metodo create del Prisma Client per creare un nuovo tag
         const tag = await prisma.tag.create({
-            data: {
-                name: name,
-            },
+            data: { name },
         });
-        // Log di conferma della creazione del tag
-        console.log('Tag creato:', tag);
-        // Restituzione del tag creato
-        return tag;
+        res.status(201).json(tag);
     } catch (error) {
-        // Gestione degli errori in caso di fallimento della creazione
         console.error('Errore durante la creazione del tag:', error);
-        throw error;
+        res.status(500).json({ error: 'Qualcosa è andato storto' });
     }
 };
 
-module.exports = { createTag };
+// Recuperare tutti i tag
+exports.getTags = async (req, res) => {
+    try {
+        const tags = await prisma.tag.findMany();
+        res.status(200).json(tags);
+    } catch (error) {
+        res.status(500).json({ error: 'Qualcosa è andato storto' });
+    }
+};
+
+// Recuperare un tag tramite il suo id
+exports.getTagById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const tag = await prisma.tag.findUnique({ where: { id: parseInt(id) } });
+        if (tag) {
+            res.status(200).json(tag);
+        } else {
+            res.status(404).json({ error: 'Tag non trovato' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Qualcosa è andato storto' });
+    }
+};
+
+// Aggiornare un tag tramite il suo id
+exports.updateTagById = async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    try {
+        const tag = await prisma.tag.update({
+            where: { id: parseInt(id) },
+            data: { name },
+        });
+        res.status(200).json(tag);
+    } catch (error) {
+        res.status(500).json({ error: 'Qualcosa è andato storto' });
+    }
+};
+
+// Eliminare un tag tramite il suo id
+exports.deleteTagById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.tag.delete({ where: { id: parseInt(id) } });
+        res.status(204).end();
+    } catch (error) {
+        res.status(500).json({ error: 'Qualcosa è andato storto' });
+    }
+};
