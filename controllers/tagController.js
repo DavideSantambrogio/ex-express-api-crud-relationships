@@ -15,12 +15,13 @@ exports.createTag = async (req, res) => {
     }
 };
 
-// Recuperare tutti i tag
+// Recuperare tutti i tags
 exports.getTags = async (req, res) => {
     try {
         const tags = await prisma.tag.findMany();
         res.status(200).json(tags);
     } catch (error) {
+        console.error('Errore durante il recupero dei tags:', error);
         res.status(500).json({ error: 'Qualcosa è andato storto' });
     }
 };
@@ -36,6 +37,7 @@ exports.getTagById = async (req, res) => {
             res.status(404).json({ error: 'Tag non trovato' });
         }
     } catch (error) {
+        console.error('Errore durante il recupero del tag per id:', error);
         res.status(500).json({ error: 'Qualcosa è andato storto' });
     }
 };
@@ -51,6 +53,7 @@ exports.updateTagById = async (req, res) => {
         });
         res.status(200).json(tag);
     } catch (error) {
+        console.error('Errore durante l\'aggiornamento del tag:', error);
         res.status(500).json({ error: 'Qualcosa è andato storto' });
     }
 };
@@ -62,6 +65,7 @@ exports.deleteTagById = async (req, res) => {
         await prisma.tag.delete({ where: { id: parseInt(id) } });
         res.status(204).end();
     } catch (error) {
+        console.error('Errore durante l\'eliminazione del tag:', error);
         res.status(500).json({ error: 'Qualcosa è andato storto' });
     }
 };
