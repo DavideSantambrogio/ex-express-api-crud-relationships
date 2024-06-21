@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const slugify = require('slugify');
+const slugify = require('slugify'); // Assicurati di importare slugify correttamente
 const prisma = new PrismaClient();
 
 // Funzione per generare uno slug unico
@@ -49,32 +49,12 @@ exports.createPost = async (req, res) => {
     }
 };
 
-// Recuperare un post tramite il suo slug
-exports.getPostBySlug = async (req, res) => {
-    const { slug } = req.params;
-    try {
-        const post = await prisma.post.findUnique({
-            where: { slug },
-            include: {
-                category: true,
-                tags: true
-            }
-        });
-        if (post) {
-            res.status(200).json(post);
-        } else {
-            res.status(404).json({ error: 'Post non trovato' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Qualcosa è andato storto' });
-    }
-};
 
-// Ottenere tutti i post con opzione di filtro per pubblicati e non pubblicati
+// Recuperare tutti i post con opzione di filtro per pubblicati e non pubblicati
 exports.getPosts = async (req, res) => {
     try {
         const where = {};
-        const { published, page = 1, pageSize = 50, searchTerm } = req.query;
+        const { published, page = 1, pageSize = 10, searchTerm } = req.query;
 
         if (published !== undefined) {
             where.published = published === 'true';
@@ -109,13 +89,36 @@ exports.getPosts = async (req, res) => {
     }
 };
 
-// Aggiornare un post tramite il suo slug
+// Recuperare un post tramite il suo slug
+exports.getPostBySlug = async (req, res) => {
+    const { slug } = req.params;
+    try {
+        const post = await prisma.post.findUnique({
+            where: { slug },
+            include: {
+                category: true,
+                tags: true
+            }
+        });
+        if (post) {
+            res.status(200).json(post);
+        } else {
+            res.status(404).json({ error: 'Post non trovato' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Qualcosa è andato storto' });
+    }
+};
+
+// Aggiornare un post tramite slug
 exports.updatePostBySlug = async (req, res) => {
     const { slug } = req.params;
-    const { title, image, content, published } = req.body;
+    const { title, image, content, published, categoryId, tagIds } = req.body;
     try {
         const newSlug = await generateUniqueSlug(title);
-        const post = await prisma.post.update({
+        const tagIdsArray = Array.isArray(tagIds) ? tagIds : [];
+
+        const updatedPost = await prisma.post.update({
             where: { slug },
             data: {
                 title,
@@ -123,23 +126,33 @@ exports.updatePostBySlug = async (req, res) => {
                 image,
                 content,
                 published,
+                category: categoryId ? { connect: { id: categoryId } } : undefined,
+                tags: {
+                    set: tagIdsArray.map(id => ({ id }))
+                }
             },
+            include: {
+                category: true,
+                tags: true
+            }
         });
-        res.status(200).json(post);
+
+        res.status(200).json(updatedPost);
     } catch (error) {
         res.status(500).json({ error: 'Qualcosa è andato storto' });
     }
 };
 
-// Eliminare un post tramite il suo slug
-exports.deletePostBySlug = async (req, res) => {
-    const { slug } = req.params;
+// Eliminare un post tramite ID
+exports.deletePostById = async (req, res) => {
+    const { id } = req.params;
     try {
         await prisma.post.delete({
-            where: { slug },
+            where: { id: parseInt(id) }
         });
         res.status(204).end();
     } catch (error) {
+        console.error('Errore durante l\'eliminazione del post:', error);
         res.status(500).json({ error: 'Qualcosa è andato storto' });
     }
 };
